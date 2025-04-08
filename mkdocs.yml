@@ -1,0 +1,46 @@
+site_name: Vibe Coder Handbook
+site_description: The comprehensive guide to enhancing your development workflow with AI coding assistants
+site_author: Wyatt Roersma
+repo_url: https://github.com/threatflux/Vibe_Coder_Handbook
+theme:
+  name: material
+  palette:
+    primary: indigo
+    accent: indigo
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.emoji
+  - admonition
+  - toc:
+      permalink: true
+nav:
+  - Home: index.md
+  - Guides:
+    - Getting Started: guides/getting_started.md
+    - Roo Code Setup: guides/roo_code_setup.md
+    - Model Selection: guides/model_selection.md
+    - Google Cloud Vertex AI Setup: guides/vertex_ai_setup.md
+    - MCP Servers: guides/mcp_servers.md
+    - GitHub Pages Deployment: guides/github_pages_deployment.md
+    - Memory Management: guides/memory_management.md
+    - VS Code Integration: guides/vs_code_integration.md
+    - Advanced Techniques: guides/advanced_techniques.md
+    - Troubleshooting: guides/troubleshooting.md
+  - Reference:
+    - Model Comparison: reference/model_comparison.md
+    - Makefile Commands: reference/makefile_commands.md
+    - Best Practices: reference/best_practices.md
+  - Templates:
+    - New Project: templates/new_project.md
+    - System Instructions: templates/system_instructions.md
+  - Examples:
+    - System Instructions: examples/system_instructions/coding_assistant.md

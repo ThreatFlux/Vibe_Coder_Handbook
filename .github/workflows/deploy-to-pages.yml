@@ -1,0 +1,124 @@
+name: Deploy Handbook to GitHub Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs mkdocs-material
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      
+      - name: Create mkdocs config if it doesn't exist
+        run: |
+          if [ ! -f mkdocs.yml ]; then
+            cat > mkdocs.yml << EOL
+            site_name: Vibe Coder Handbook
+            site_description: The comprehensive guide to enhancing your development workflow with AI coding assistants
+            site_author: Wyatt Roersma
+            repo_url: https://github.com/threatflux/Vibe_Coder_Handbook
+            theme:
+              name: material
+              palette:
+                primary: indigo
+                accent: indigo
+              features:
+                - navigation.instant
+                - navigation.tracking
+                - navigation.tabs
+                - navigation.top
+                - search.highlight
+                - content.code.copy
+            markdown_extensions:
+              - pymdownx.highlight
+              - pymdownx.superfences
+              - pymdownx.tabbed
+              - pymdownx.emoji
+              - admonition
+              - toc:
+                  permalink: true
+            nav:
+              - Home: index.md
+              - Guides:
+                - Getting Started: guides/getting_started.md
+                - Roo Code Setup: guides/roo_code_setup.md
+                - Model Selection: guides/model_selection.md
+                - Google Cloud Vertex AI Setup: guides/vertex_ai_setup.md
+                - MCP Servers: guides/mcp_servers.md
+                - Memory Management: guides/memory_management.md
+                - VS Code Integration: guides/vs_code_integration.md
+                - Advanced Techniques: guides/advanced_techniques.md
+                - Troubleshooting: guides/troubleshooting.md
+              - Reference:
+                - Model Comparison: reference/model_comparison.md
+                - Makefile Commands: reference/makefile_commands.md
+                - Best Practices: reference/best_practices.md
+              - Templates:
+                - New Project: templates/new_project.md
+                - System Instructions: templates/system_instructions.md
+              - Examples:
+                - System Instructions: examples/system_instructions/coding_assistant.md
+            EOL
+          fi
+      
+      - name: Create docs directory and move files
+        run: |
+          mkdir -p docs
+          cp README.md docs/index.md
+          mkdir -p docs/guides docs/reference docs/templates docs/examples/system_instructions
+          cp guides/*.md docs/guides/
+          cp reference/*.md docs/reference/
+          cp templates/*.md docs/templates/
+          mkdir -p docs/examples/system_instructions
+          cp examples/system_instructions/*.md docs/examples/system_instructions/
+      
+      - name: Build with MkDocs
+        run: mkdocs build
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./site
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
